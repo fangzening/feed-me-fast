@@ -118,53 +118,5 @@ class OrderSerializer(serializers.ModelSerializer):
         return order
 
 
-class OrderDetailSerializer(serializers.ModelSerializer):
-    order = OrderSerializer(read_only=True)
-    food = FoodSerializer(read_only=True)
-
-    class Meta:
-        model = OrderDetails
-        fields = ('id', 'quantity', 'order', 'food')
-
-    def create(self, validated_data):
-        food_ = Food.objects.get(id=validated_data["food"])
-        order_ = Order.objects.get(id=validated_data["order"])
-
-        order_detail = OrderDetails(
-            quantity=validated_data["quantity"],
-            order=order_,
-            food=food_
-        )
-        order_detail.save()
-        return order_detail
 
 
-class DriverSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-
-    class Meta:
-        model = Driver
-        fields = ('id', 'vehicle_type', 'user')
-
-
-class GPSLocationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GPSLocation
-        fields = ('id', 'latitude', 'longitude', 'order')
-
-
-class RatingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rating
-        fields = ('id', 'restaurant_star', 'order', 'restaurant', 'user')
-
-    def create(self, validated_data):
-        rating = Rating(
-            restaurant_star=validated_data["restaurant_star"],
-            order=validated_data["order"],
-            restaurant=validated_data["restaurant"],
-            user=validated_data["user"]
-        )
-
-        rating.save()
-        return rating
